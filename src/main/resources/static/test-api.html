@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zvonobot API Test - Тестирование API</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            clear: both;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+            font-size: 16px;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        
+        textarea {
+            height: 120px;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid transparent;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        
+        .loading {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        
+        .warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-bottom: none;
+            background: #f8f9fa;
+            margin-right: 5px;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+        }
+        
+        .tab.active {
+            background: white;
+            border-color: #ddd;
+            border-bottom: 2px solid white;
+            margin-bottom: -2px;
+            color: #007bff;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .info-box {
+            background-color: #e7f3ff;
+            border: 2px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .info-box h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #0066cc;
+            font-size: 1.3em;
+        }
+        
+        .info-box p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        
+        .button-group button {
+            width: auto;
+            min-width: 180px;
+            margin: 0;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .button-group button:nth-child(1) { background-color: #28a745; }
+        .button-group button:nth-child(1):hover { background-color: #218838; }
+        
+        .button-group button:nth-child(2) { background-color: #fd7e14; }
+        .button-group button:nth-child(2):hover { background-color: #e8690b; }
+        
+        .button-group button:nth-child(3) { background-color: #17a2b8; }
+        .button-group button:nth-child(3):hover { background-color: #138496; }
+        
+        .button-group button:nth-child(4) { background-color: #6f42c1; }
+        .button-group button:nth-child(4):hover { background-color: #5a32a3; }
+        
+        .button-group button:nth-child(5) { background-color: #ffc107; color: #212529; }
+        .button-group button:nth-child(5):hover { background-color: #e0a800; }
+        
+        small {
+            display: block;
+            color: #666;
+            font-size: 14px;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        
+        /* Responsive дизайн */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .button-group button {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                margin-right: 0;
+                margin-bottom: 5px;
+                border-radius: 8px;
+                min-width: auto;
+            }
+            
+            .tab.active {
+                border-radius: 8px;
+                margin-bottom: 5px;
+            }
+            
+            .result {
+                font-size: 12px;
+                padding: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .info-box {
+                padding: 15px;
+            }
+            
+            .info-box h3 {
+                font-size: 1.2em;
+            }
+        }
+        
+        /* Анимации */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes progress {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(0%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        /* Улучшения для accessibility */
+        button:focus {
+            outline: 3px solid rgba(0, 123, 255, 0.5);
+            outline-offset: 2px;
+        }
+        
+        .tab:focus {
+            outline: 3px solid rgba(0, 123, 255, 0.5);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Тестирование Zvonobot API</h1>
+        
+        <div class="info-box">
+            <h3>ℹ️ Информация</h3>
+            <p><strong>Статус API ключа:</strong> ✅ Работает</p>
+            <p><strong>Доступные номера:</strong> ✅ 300+ номеров (получено успешно)</p>
+            <p><strong>Предварительно смодерированные аудио:</strong> ✅ 1 файл (ID: 247273) - для голосовых сообщений</p>
+            <p><strong>Голосовые сообщения:</strong> ⚠️ Требуют модерации аккаунта (кроме предварительно смодерированных)</p>
+            <p><strong>SMS сообщения:</strong> ✅ Используют минимальный текст (одна точка) + IVR</p>
+            <p><strong>Ошибки:</strong> ✅ Теперь отображаются в читаемом русском тексте</p>
+            <p><strong>Автозагрузка номеров:</strong> ✅ Номера автоматически загружаются при нажатии "📞 Получить номера"</p>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="testApiKey()">🔑 Тестировать API ключ</button>
+            <button onclick="getUserProfile()">👤 Профиль</button>
+            <button onclick="getOutgoingPhones()">📞 Получить номера</button>
+            <button onclick="getRecords()">🎵 Получить аудио</button>
+            <button onclick="testSms()">📱 Тест SMS</button>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('voice')">🎤 Голосовое сообщение</div>
+            <div class="tab" onclick="switchTab('sms')">📱 SMS</div>
+        </div>
+        
+        <!-- Голосовое сообщение -->
+        <div id="voice-tab" class="tab-content active">
+            <form id="voice-form">
+                <div class="form-group">
+                    <label for="voice-outgoing-phone">Исходящий номер (опционально):</label>
+                    <select id="voice-outgoing-phone">
+                        <option value="">Автоматический выбор</option>
+                        <option value="77719470943">77719470943</option>
+                        <option value="77719470821">77719470821</option>
+                        <option value="77719470887">77719470887</option>
+                        <option value="77059258998">77059258998</option>
+                        <option value="77719470977">77719470977</option>
+                    </select>
+                    <small style="color: #666;">Выберите конкретный номер или оставьте для автоматического выбора. Нажмите "📞 Получить номера" для обновления списка.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="voice-phone">Номер телефона:</label>
+                    <input type="text" id="voice-phone" placeholder="+7 999 123 45 67" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="voice-text">Текст сообщения:</label>
+                    <textarea id="voice-text" placeholder="Введите текст для голосового сообщения" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="voice-record-id">ID предварительно смодерированного аудио (опционально):</label>
+                    <select id="voice-record-id">
+                        <option value="">Генерировать голос из текста (требует модерации)</option>
+                        <option value="247273">247273 - Аудиозапись 25.07.2025 (11:04:35)</option>
+                    </select>
+                    <small style="color: #666;">✅ Рекомендуется использовать предварительно смодерированный аудиофайл для избежания проблем с модерацией</small>
+                </div>
+                
+                <button type="submit" id="voice-submit">Отправить голосовое сообщение</button>
+            </form>
+        </div>
+        
+        <!-- SMS -->
+        <div id="sms-tab" class="tab-content">
+            
+            
+            <form id="sms-form">
+                <div class="form-group">
+                    <label for="sms-outgoing-phone">Исходящий номер (опционально):</label>
+                    <select id="sms-outgoing-phone">
+                        <option value="">Автоматический выбор</option>
+                        <option value="77719470943">77719470943</option>
+                        <option value="77719470821">77719470821</option>
+                        <option value="77719470887">77719470887</option>
+                        <option value="77059258998">77059258998</option>
+                        <option value="77719470977">77719470977</option>
+                    </select>
+                    <small style="color: #666;">Выберите конкретный номер или оставьте для автоматического выбора. Нажмите "📞 Получить номера" для обновления списка.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sms-phone">Номер телефона:</label>
+                    <input type="text" id="sms-phone" placeholder="79991234567" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sms-text">Текст SMS:</label>
+                    <textarea id="sms-text" placeholder="Введите текст SMS сообщения..." required></textarea>
+                </div>
+                
+                <button type="submit" id="sms-submit">Отправить SMS</button>
+            </form>
+        </div>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8081/api';
+        
+        function switchTab(tabName) {
+            // Убираем активный класс у всех табов
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Добавляем активный класс к выбранному табу
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+        
+        function decodeUnicode(str) {
+            return str.replace(/\\u([0-9a-fA-F]{4})/g, function(match, group) {
+                return String.fromCharCode(parseInt(group, 16));
+            });
+        }
+        
+        function showResult(message, type = 'success') {
+            // Декодируем Unicode-последовательности в сообщении
+            const decodedMessage = decodeUnicode(message);
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = decodedMessage;
+            resultDiv.className = `result ${type} fade-in`;
+            resultDiv.style.display = 'block';
+            
+            // Плавная прокрутка к результату
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function showLoading(message) {
+            showResult(message, 'loading');
+        }
+        
+        // Функция для блокировки/разблокировки кнопок
+        function setButtonsState(disabled) {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.disabled = disabled;
+            });
+        }
+        
+        // Функция для показа прогресса
+        function showProgress(message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="margin-bottom: 15px;">${message}</div>
+                    <div style="width: 100%; height: 4px; background-color: #e9ecef; border-radius: 2px; overflow: hidden;">
+                        <div style="width: 100%; height: 100%; background-color: #007bff; animation: progress 2s ease-in-out infinite;"></div>
+                    </div>
+                </div>
+            `;
+            resultDiv.className = 'result loading fade-in';
+            resultDiv.style.display = 'block';
+        }
+        
+        async function sendRequest(endpoint, data) {
+            try {
+                setButtonsState(true);
+                showProgress('🔄 Отправка запроса...');
+                
+                const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult(`✅ Успешно!\n\nОтвет сервера:\n${JSON.stringify(result, null, 2)}`, 'success');
+                } else {
+                    showResult(`❌ Ошибка!\n\n${result.error}`, 'error');
+                }
+                
+                return result;
+            } catch (error) {
+                showResult(`❌ Ошибка сети!\n\n${error.message}`, 'error');
+                throw error;
+            } finally {
+                setButtonsState(false);
+            }
+        }
+        
+        async function testApiKey() {
+            try {
+                setButtonsState(true);
+                showProgress('🔑 Тестирование API ключа...');
+                
+                const response = await fetch(`${API_BASE_URL}/test-api-key`, {
+                    method: 'GET'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult(`✅ ${result.message}\n\nОтвет сервера:\n${JSON.stringify(result.data, null, 2)}`, 'success');
+                } else {
+                    showResult(`❌ Проблема с API ключом!\n\n${result.error || 'Неизвестная ошибка'}`, 'error');
+                }
+                
+                return result;
+            } catch (error) {
+                showResult(`❌ Ошибка при тестировании API ключа!\n\n${error.message}`, 'error');
+                throw error;
+            } finally {
+                setButtonsState(false);
+            }
+        }
+
+        async function getUserProfile() {
+            try {
+                setButtonsState(true);
+                showProgress('👤 Получение профиля пользователя...');
+                
+                const response = await fetch(`${API_BASE_URL}/get-profile`, {
+                    method: 'GET'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showResult(`✅ Профиль пользователя получен!\n\nОтвет сервера:\n${JSON.stringify(result.data, null, 2)}`, 'success');
+                } else {
+                    showResult(`❌ Ошибка при получении профиля пользователя!\n\n${result.error}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Ошибка сети при получении профиля пользователя!\n\n${error.message}`, 'error');
+                throw error;
+            } finally {
+                setButtonsState(false);
+            }
+        }
+
+        async function getOutgoingPhones() {
+            try {
+                setButtonsState(true);
+                showProgress('📞 Получение списка номеров...');
+                
+                const response = await fetch(`${API_BASE_URL}/get-phones`, {
+                    method: 'GET'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showResult(`✅ Получен список исходящих номеров!\n\nОтвет сервера:\n${JSON.stringify(result.data, null, 2)}`, 'success');
+                    
+                    // Автоматически заполняем выпадающие списки номерами
+                    updatePhoneDropdowns(result.data);
+                } else {
+                    showResult(`❌ Ошибка при получении исходящих номеров!\n\n${result.error}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Ошибка сети при получении исходящих номеров!\n\n${error.message}`, 'error');
+                throw error;
+            } finally {
+                setButtonsState(false);
+            }
+        }
+        
+        // Функция для обновления выпадающих списков номеров
+        function updatePhoneDropdowns(phonesData) {
+            if (!phonesData || !Array.isArray(phonesData)) {
+                console.warn('Данные номеров не являются массивом:', phonesData);
+                return;
+            }
+            
+            // Извлекаем номера из данных
+            const phoneNumbers = phonesData
+                .filter(phone => phone && phone.phone)
+                .map(phone => phone.phone)
+                .slice(0, 10); // Ограничиваем до 10 номеров для удобства
+            
+            if (phoneNumbers.length === 0) {
+                console.warn('Не найдено номеров для заполнения');
+                return;
+            }
+            
+            // Обновляем выпадающие списки для голосовых сообщений
+            const voicePhoneSelect = document.getElementById('voice-outgoing-phone');
+            updateSelectOptions(voicePhoneSelect, phoneNumbers);
+            
+            // Обновляем выпадающие списки для SMS
+            const smsPhoneSelect = document.getElementById('sms-outgoing-phone');
+            updateSelectOptions(smsPhoneSelect, phoneNumbers);
+            
+            // Показываем уведомление о успешном обновлении
+            showPhoneUpdateNotification(phoneNumbers.length);
+            
+            console.log(`Обновлено ${phoneNumbers.length} номеров в выпадающих списках`);
+        }
+        
+        // Функция для показа уведомления об обновлении номеров
+        function showPhoneUpdateNotification(count) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: #28a745;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1000;
+                font-weight: 600;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = `✅ Загружено ${count} номеров`;
+            
+            document.body.appendChild(notification);
+            
+            // Удаляем уведомление через 3 секунды
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+        
+        // Функция для обновления опций в select элементе
+        function updateSelectOptions(selectElement, phoneNumbers) {
+            if (!selectElement) return;
+            
+            // Сохраняем текущее выбранное значение
+            const currentValue = selectElement.value;
+            
+            // Очищаем существующие опции, кроме первой (Автоматический выбор)
+            while (selectElement.children.length > 1) {
+                selectElement.removeChild(selectElement.lastChild);
+            }
+            
+            // Добавляем новые номера
+            phoneNumbers.forEach(phone => {
+                const option = document.createElement('option');
+                option.value = phone;
+                option.textContent = phone;
+                selectElement.appendChild(option);
+            });
+            
+            // Восстанавливаем выбранное значение, если оно все еще существует
+            if (currentValue && phoneNumbers.includes(currentValue)) {
+                selectElement.value = currentValue;
+            }
+        }
+
+        async function getRecords() {
+            try {
+                setButtonsState(true);
+                showProgress('🎵 Получение списка аудиофайлов...');
+                
+                const response = await fetch(`${API_BASE_URL}/get-records`, {
+                    method: 'GET'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    if (result.data && result.data.length > 0) {
+                        showResult(`✅ Получен список предварительно смодерированных аудиофайлов!\n\nДоступно файлов: ${result.data.length}\n\nОтвет сервера:\n${JSON.stringify(result.data, null, 2)}`, 'success');
+                    } else {
+                        showResult(`⚠️ Список предварительно смодерированных аудиофайлов пуст!\n\nЭто означает, что для отправки голосовых сообщений потребуется модерация аккаунта.\n\nПопробуйте отправить SMS сообщение вместо голосового.`, 'warning');
+                    }
+                } else {
+                    showResult(`❌ Ошибка при получении аудиофайлов!\n\n${result.error}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Ошибка сети при получении аудиофайлов!\n\n${error.message}`, 'error');
+                throw error;
+            } finally {
+                setButtonsState(false);
+            }
+        }
+        
+        async function testSms() {
+            const phone = '+77079621630'; // Example phone number for testing
+            const text = 'Привет! Это тестовое SMS сообщение на русском языке.';
+            const outgoingPhone = document.getElementById('sms-outgoing-phone').value;
+
+            // Очищаем номер телефона от лишних символов
+            let cleanPhone = phone.replace(/[\s\-\(\)\+]/g, '');
+            
+            // Валидация
+            if (!/^7\d{10}$/.test(cleanPhone)) {
+                showResult('❌ Ошибка валидации!\n\nНомер телефона должен быть в формате 7XXXXXXXXXX\n\nПримеры:\n+7 707 962 16 30\n+7-707-962-16-30\n77079621630', 'error');
+                return;
+            }
+
+            if (!text.trim()) {
+                showResult('❌ Ошибка валидации!\n\nТекст сообщения не может быть пустым', 'error');
+                return;
+            }
+
+            try {
+                const requestData = { phone: cleanPhone, text };
+                if (outgoingPhone && outgoingPhone.trim() !== '') {
+                    requestData.outgoingPhone = outgoingPhone;
+                }
+                await sendRequest('send-sms', requestData);
+            } catch (error) {
+                // Ошибка уже обработана в sendRequest
+            }
+        }
+        
+        // Обработчик формы голосового сообщения
+        document.getElementById('voice-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            let phone = document.getElementById('voice-phone').value;
+            const text = document.getElementById('voice-text').value;
+            const recordId = document.getElementById('voice-record-id').value;
+            const outgoingPhone = document.getElementById('voice-outgoing-phone').value;
+            
+            // Очищаем номер телефона от лишних символов
+            phone = phone.replace(/[\s\-\(\)\+]/g, '');
+            
+            // Валидация
+            if (!/^7\d{10}$/.test(phone)) {
+                showResult('❌ Ошибка валидации!\n\nНомер телефона должен быть в формате 7XXXXXXXXXX\n\nПримеры:\n+7 707 962 16 30\n+7-707-962-16-30\n77079621630', 'error');
+                return;
+            }
+            
+            if (!text.trim()) {
+                showResult('❌ Ошибка валидации!\n\nТекст сообщения не может быть пустым', 'error');
+                return;
+            }
+            
+            try {
+                const requestData = { phone, text };
+                if (recordId && recordId.trim() !== '') {
+                    requestData.recordId = parseInt(recordId);
+                }
+                if (outgoingPhone && outgoingPhone.trim() !== '') {
+                    requestData.outgoingPhone = outgoingPhone;
+                }
+                await sendRequest('send-voice', requestData);
+            } catch (error) {
+                // Ошибка уже обработана в sendRequest
+            }
+        });
+        
+        // Обработчик формы SMS
+        document.getElementById('sms-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            let phone = document.getElementById('sms-phone').value;
+            const text = document.getElementById('sms-text').value;
+            const outgoingPhone = document.getElementById('sms-outgoing-phone').value;
+            
+            // Очищаем номер телефона от лишних символов
+            phone = phone.replace(/[\s\-\(\)\+]/g, '');
+            
+            // Валидация
+            if (!/^7\d{10}$/.test(phone)) {
+                showResult('❌ Ошибка валидации!\n\nНомер телефона должен быть в формате 7XXXXXXXXXX\n\nПримеры:\n+7 707 962 16 30\n+7-707-962-16-30\n77079621630', 'error');
+                return;
+            }
+            
+            if (!text.trim()) {
+                showResult('❌ Ошибка валидации!\n\nТекст сообщения не может быть пустым', 'error');
+                return;
+            }
+            
+            try {
+                const requestData = { phone, text };
+                if (outgoingPhone && outgoingPhone.trim() !== '') {
+                    requestData.outgoingPhone = outgoingPhone;
+                }
+                await sendRequest('send-sms', requestData);
+            } catch (error) {
+                // Ошибка уже обработана в sendRequest
+            }
+        });
+        
+        // Автозаполнение для тестирования
+        document.addEventListener('DOMContentLoaded', async () => {
+            const testPhone = '+77079621630';
+            const testVoiceText = 'Привет! Это тестовое голосовое сообщение на русском языке от API Звонобота.';
+            const testSmsText = 'Привет! Это тестовое SMS сообщение на русском языке.';
+            
+            document.getElementById('voice-phone').value = testPhone;
+            document.getElementById('voice-text').value = testVoiceText;
+            document.getElementById('voice-record-id').value = '247273'; // Выбираем предварительно смодерированный аудиофайл
+            
+            document.getElementById('sms-phone').value = testPhone;
+            document.getElementById('sms-text').value = testSmsText;
+            
+            // Автоматически получаем номера при загрузке страницы
+            try {
+                console.log('Автоматическое получение номеров при загрузке страницы...');
+                const response = await fetch(`${API_BASE_URL}/get-phones`, {
+                    method: 'GET'
+                });
+                const result = await response.json();
+                if (result.success && result.data) {
+                    updatePhoneDropdowns(result.data);
+                    console.log('Номера успешно загружены при инициализации');
+                }
+            } catch (error) {
+                console.log('Не удалось автоматически загрузить номера:', error.message);
+                // Это не критическая ошибка, пользователь может нажать кнопку "Получить номера" вручную
+            }
+        });
+    </script>
+</body>
+</html> 

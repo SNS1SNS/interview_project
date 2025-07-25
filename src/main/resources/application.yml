@@ -1,0 +1,31 @@
+server:
+  port: 8081
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  application:
+    name: zvonobot-api-integration
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+logging:
+  level:
+    com.zvonbot.interview: DEBUG
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+  charset:
+    console: UTF-8
+    file: UTF-8
+
+zvonobot:
+  api:
+    base-url: https://lk.zvonobot.kz
+    key: ${ZVONOBOT_API_KEY:"ваш api key"}
