@@ -104,7 +104,7 @@ src/main/java/com/zvonbot/interview/
 
 1. **Клонируйте репозиторий:**
 ```bash
-git clone <repository-url>
+git clone https://github.com/SNS1SNS/interview_project
 cd interview
 ```
 
@@ -239,5 +239,6 @@ interview/
 1. Проверьте логи приложения
 2. Убедитесь в правильности API ключа
 3. Проверьте доступность API Звонобота
-4. Обратитесь к документации API Звонобота #   i n t e r v i e w _ p r o j e c t  
+4. Обратитесь к документации API Звонобота #   i n t e r v i e w _ p r o j e c t 
+ 
  
